@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooking Rota Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .setup-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .setup-section h2 {
+            color: #5a67d8;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .people-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .people-input input {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .people-input input:focus {
+            outline: none;
+            border-color: #5a67d8;
+            box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.1);
+        }
+
+        .people-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .person-tag {
+            background: #5a67d8;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .person-tag .remove {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .rota-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .week-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .week-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .week-nav button {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .week-nav button:hover {
+            background: #5a67d8;
+            color: white;
+            border-color: #5a67d8;
+        }
+
+        .current-week {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #5a67d8;
+        }
+
+        .rota-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .day-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid #5a67d8;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .day-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .day-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-transform: capitalize;
+        }
+
+        .cooks {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cook {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .weekend {
+            border-left-color: #ed8936;
+        }
+
+        .weekend .day-name {
+            color: #ed8936;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .rota-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .week-controls {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍳 Cooking Rota Manager</h1>
+            <p>Organize your cooking schedule with rotating weekend partners</p>
+        </div>
+
+        <div class="setup-section">
+            <h2>Setup Your Group</h2>
+            <div class="people-input">
+                <input type="text" id="personInput" placeholder="Enter person's name" onkeypress="handleEnter(event)">
+                <button class="btn" onclick="addPerson()">Add Person</button>
+            </div>
+            <div class="people-list" id="peopleList"></div>
+            <button class="btn" onclick="generateRota()" id="generateBtn" style="display: none;">Generate Rota</button>
+        </div>
+
+        <div class="rota-section" id="rotaSection" style="display: none;">
+            <div class="week-controls">
+                <div class="week-nav">
+                    <button onclick="changeWeek(-1)">← Previous Week</button>
+                    <button onclick="changeWeek(1)">Next Week →</button>
+                </div>
+                <div class="current-week" id="currentWeek">Week 1</div>
+                <button class="btn" onclick="resetSetup()">Change Group</button>
+            </div>
+            <div class="rota-grid" id="rotaGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        let people = [];
+        let currentWeekNum = 1;
+        let weekdayPairs = [];
+        let weekendPerson = '';
+
+        // Default setup for your group
+        const defaultPeople = ['Zakir', 'Antonio', 'Kabuswe', 'Reuben', 'Collins', 'Skills'];
+        
+        // Initialize with default people
+        window.onload = function() {
+            defaultPeople.forEach(person => {
+                people.push(person);
+                updatePeopleDisplay();
+            });
+            setupDefaultRota();
+        };
+
+        function setupDefaultRota() {
+            if (people.length >= 6) {
+                // Your specific arrangement
+                weekdayPairs = [
+                    ['Antonio', 'Zakir'],    // Monday & Tuesday
+                    ['Kabuswe', 'Collins'],  // Wednesday
+                    ['Kabuswe', 'Skills'],   // Thursday
+                    ['Skills', 'Collins']    // Friday
+                ];
+                weekendPerson = 'Reuben';
+                document.getElementById('generateBtn').style.display = 'block';
+            }
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                addPerson();
+            }
+        }
+
+        function addPerson() {
+            const input = document.getElementById('personInput');
+            const name = input.value.trim();
+            
+            if (name && !people.includes(name)) {
+                people.push(name);
+                input.value = '';
+                updatePeopleDisplay();
+                
+                if (people.length >= 4) {
+                    document.getElementById('generateBtn').style.display = 'block';
+                }
+            }
+        }
+
+        function removePerson(name) {
+            people = people.filter(p => p !== name);
+            updatePeopleDisplay();
+            
+            if (people.length < 4) {
+                document.getElementById('generateBtn').style.display = 'none';
+            }
+        }
+
+        function updatePeopleDisplay() {
+            const container = document.getElementById('peopleList');
+            container.innerHTML = people.map(person => `
+                <div class="person-tag">
+                    ${person}
+                    <button class="remove" onclick="removePerson('${person}')">×</button>
+                </div>
+            `).join('');
+        }
+
+        function generateRota() {
+            if (people.length < 4) {
+                alert('You need at least 4 people to create a rota!');
+                return;
+            }
+
+            // If not using default setup, create a flexible arrangement
+            if (people.length !== 6 || !people.includes('Reuben')) {
+                createFlexibleRota();
+            }
+
+            document.getElementById('rotaSection').style.display = 'block';
+            updateRotaDisplay();
+        }
+
+        function createFlexibleRota() {
+            // Create pairs from available people (excluding the last person for weekend duty)
+            weekendPerson = people[people.length - 1];
+            const availableForWeekdays = people.slice(0, -1);
+            
+            weekdayPairs = [];
+            for (let i = 0; i < availableForWeekdays.length - 1; i += 2) {
+                if (i + 1 < availableForWeekdays.length) {
+                    weekdayPairs.push([availableForWeekdays[i], availableForWeekdays[i + 1]]);
+                }
+            }
+            
+            // If odd number, pair the last person with the first
+            if (availableForWeekdays.length % 2 !== 0) {
+                weekdayPairs.push([availableForWeekdays[availableForWeekdays.length - 1], availableForWeekdays[0]]);
+            }
+        }
+
+        function getWeekdayPair(dayIndex) {
+            // Monday & Tuesday use pair 0, Wednesday uses pair 1, etc.
+            const pairMappings = [0, 0, 1, 2, 3]; // Mon, Tue, Wed, Thu, Fri
+            const pairIndex = pairMappings[dayIndex] % weekdayPairs.length;
+            return weekdayPairs[pairIndex] || weekdayPairs[0];
+        }
+
+        function getWeekendPartner(weekNum) {
+            // Rotate through Monday (0), Wednesday (2), Friday (4) pairs
+            const rotationDays = [0, 2, 4];
+            const rotationIndex = (weekNum - 1) % rotationDays.length;
+            const dayIndex = rotationDays[rotationIndex];
+            return getWeekdayPair(dayIndex);
+        }
+
+        function updateRotaDisplay() {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const rotaGrid = document.getElementById('rotaGrid');
+            const currentWeekElement = document.getElementById('currentWeek');
+            
+            currentWeekElement.textContent = `Week ${currentWeekNum}`;
+            
+            rotaGrid.innerHTML = days.map((day, index) => {
+                let cooks;
+                
+                if (index < 5) { // Weekdays
+                    cooks = getWeekdayPair(index);
+                } else { // Weekend
+                    const weekendPartner = getWeekendPartner(currentWeekNum);
+                    cooks = [weekendPerson, ...weekendPartner];
+                }
+                
+                const isWeekend = index >= 5;
+                
+                return `
+                    <div class="day-card ${isWeekend ? 'weekend' : ''}">
+                        <div class="day-name">${day}</div>
+                        <div class="cooks">
+                            ${cooks.map(cook => `<div class="cook">👨‍🍳 ${cook}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function changeWeek(direction) {
+            currentWeekNum = Math.max(1, currentWeekNum + direction);
+            updateRotaDisplay();
+        }
+
+        function resetSetup() {
+            document.getElementById('rotaSection').style.display = 'none';
+            document.getElementById('generateBtn').style.display = people.length >= 4 ? 'block' : 'none';
+            currentWeekNum = 1;
+        }
+    </script>
+</body>
+</html>
